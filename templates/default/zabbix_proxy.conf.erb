@@ -19,7 +19,6 @@ PidFile=<%= node['zabbix']['run_dir'] %>/zabbix_proxy.pid
 Include=<%= node['zabbix']['proxy']['include_dir'] %>
 
 HousekeepingFrequency=<%= node['zabbix']['proxy']['housekeeping_frequency']%>
-MaxHousekeeperDelete=<%= node['zabbix']['proxy']['max_housekeeper_delete'] %>
 
 ExternalScripts=<%= node['zabbix']['proxy']['externalscriptspath'] %>
 Timeout=<%= node['zabbix']['proxy']['timeout']%>
