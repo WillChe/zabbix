@@ -10,6 +10,7 @@ default['zabbix']['proxy']['log_file']               = ::File.join(node['zabbix'
 default['zabbix']['proxy']['log_level']              = 3
 default['zabbix']['proxy']['housekeeping_frequency'] = '1'
 default['zabbix']['proxy']['max_housekeeper_delete'] = '100000'
+default['zabbix']['proxy']['servers']           = []
 
 default['zabbix']['proxy']['host'] = 'localhost'
 default['zabbix']['proxy']['port'] = 10_051

@@ -30,7 +30,7 @@ end
 
 root_dirs = [
   node['zabbix']['external_dir'],
-  node['zabbix']['server']['include_dir'],
+  node['zabbix']['proxy']['include_dir'],
   node['zabbix']['alert_dir']
 ]
 

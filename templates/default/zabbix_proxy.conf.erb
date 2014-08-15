@@ -12,6 +12,8 @@ DBUser=<%= @dbuser %>
 DBPassword=<%= @dbpassword %>
 DBPort=<%= @dbport %>
 
+Server=<%= node['zabbix']['proxy']['servers'].join(',') %>
+
 DebugLevel=<%= node['zabbix']['proxy']['log_level'] %>
 PidFile=<%= node['zabbix']['run_dir'] %>/zabbix_proxy.pid
 Include=<%= node['zabbix']['proxy']['include_dir'] %>
