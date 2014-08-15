@@ -142,14 +142,14 @@ template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
   notifies :restart, 'service[zabbix_server]', :delayed
 end
 
-# Define zabbix_agentd service
+# Define zabbix_server service
 service 'zabbix_server' do
   supports :status => true, :start => true, :stop => true, :restart => true
   if node['zabbix']['server']['enabled'] == true
     action [:start, :enable]
   else
     action [:stop, :disable]
-  fi
+  end
 end
 
 # Configure the Java Gateway
