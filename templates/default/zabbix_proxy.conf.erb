@@ -13,6 +13,7 @@ DBPassword=<%= @dbpassword %>
 DBPort=<%= @dbport %>
 
 Server=<%= node['zabbix']['proxy']['servers'].join(',') %>
+Hostname<%= node['fqdn'] %>
 
 DebugLevel=<%= node['zabbix']['proxy']['log_level'] %>
 PidFile=<%= node['zabbix']['run_dir'] %>/zabbix_proxy.pid
