@@ -145,7 +145,11 @@ end
 # Define zabbix_agentd service
 service 'zabbix_server' do
   supports :status => true, :start => true, :stop => true, :restart => true
-  action [:start, :enable]
+  if node['zabbix']['server']['enabled'] == true
+    action [:start, :enable]
+  else
+    action [:stop, :disable]
+  fi
 end
 
 # Configure the Java Gateway
