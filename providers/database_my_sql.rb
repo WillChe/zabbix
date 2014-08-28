@@ -20,6 +20,7 @@ def load_current_resource
 end
 
 def database_exists?(dbname, host, port, root_username, root_password)
+  require 'mysql'
   exists = false
   db = nil
   begin
