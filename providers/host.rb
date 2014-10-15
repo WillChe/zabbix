@@ -24,7 +24,7 @@ end
 action :create do
   Chef::Zabbix.with_connection(new_resource.server_connection) do |connection|
 
-    all_are_host_interfaces = new_resource.interfaces.all? { |interface| interface.kind_of?(Chef::Zabbix::API::HostInterface) }
+    all_are_host_interfaces = new_resource.interfaces.all? { |interface| interface.is_a?(Chef::Zabbix::API::HostInterface) }
     unless all_are_host_interfaces
       Chef::Application.fatal!(':interfaces must only contain Chef::Zabbix::API::HostInterface')
     end
@@ -187,7 +187,7 @@ action :update do
       interfaces = new_resource.interfaces
     end
 
-    existing_interfaces = host['interfaces'].values.map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
+    existing_interfaces = host['interfaces'].map { |interface| Chef::Zabbix::API::HostInterface.from_api_response(interface).to_hash }
     new_host_interfaces = determine_new_host_interfaces(existing_interfaces, interfaces.map(&:to_hash))
 
     host_update_request = {
