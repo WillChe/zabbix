@@ -6,7 +6,7 @@ server {
 <% if @aliases.empty? %>
   server_name <%=@server_name%>;
 <% else %>
-  server_name <%=@server_name%> <%=join(@aliases," ")%>;
+  server_name <%=@server_name%> <%=@aliases.join(" ")%>;
 <% end %>
   access_log /var/log/nginx/zabbix.access.log;
 
