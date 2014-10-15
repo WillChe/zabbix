@@ -3,8 +3,11 @@ server {
   listen      <%= @web_port %>;
   index       index.php;
   root        <%= @web_dir %>;
-  server_name "<%=@server_name%>";
-  
+<% if @aliases.empty? %>
+  server_name <%=@server_name%>;
+<% else %>
+  server_name <%=@server_name%> <%=join(@aliases," ")%>;
+<% end %>
   access_log /var/log/nginx/zabbix.access.log;
 
   location ~ .*\.php$ {

@@ -59,6 +59,7 @@ template '/etc/nginx/sites-available/zabbix' do
   mode '754'
   variables(
     :server_name => node['zabbix']['web']['fqdn'],
+	:aliases => node['zabbix']['web']['aliases'],
     :php_settings => node['zabbix']['web']['php']['settings'],
     :web_port => node['zabbix']['web']['port'],
     :web_dir => node['zabbix']['web_dir'],
