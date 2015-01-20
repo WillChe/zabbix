@@ -1,5 +1,5 @@
 default['zabbix']['database']['install_method']     = 'mysql'
-#default['mysql']['version'] = '5.1.73'
+default['mysql']['version'] = '5.6'
 default['zabbix']['database']['dbname']             = 'zabbix'
 default['zabbix']['database']['dbuser']             = 'zabbix'
 default['zabbix']['database']['dbhost']             = 'localhost'
