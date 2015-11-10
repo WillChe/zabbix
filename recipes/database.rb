@@ -7,7 +7,7 @@ end
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
-include_recipe 'database::mysql'
+#include_recipe 'database::mysql'
 #include_recipe 'mysql::client'
 mysql_client 'default' do
 	action :create
