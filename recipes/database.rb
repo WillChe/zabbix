@@ -5,7 +5,8 @@ chef_gem 'mysql' do
   action :install
 end
 mysql2_chef_gem 'default' do
-    action :install
+  client_version '5.6'
+  action :install
 end
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
