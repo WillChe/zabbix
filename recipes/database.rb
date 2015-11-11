@@ -4,8 +4,9 @@ include_recipe 'zabbix::common'
 chef_gem 'mysql' do
   action :install
 end
-
-include_recipe 'mysql2_chef_gem'
+mysql2_chef_gem 'default' do
+    action :install
+end
 
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
