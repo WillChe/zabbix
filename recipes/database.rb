@@ -5,6 +5,8 @@ chef_gem 'mysql' do
   action :install
 end
 
+include_recipe 'mysql2_chef_gem'
+
 ::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
 # Generates passwords if they aren't already set
