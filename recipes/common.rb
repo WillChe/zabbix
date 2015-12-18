@@ -59,3 +59,7 @@ end
 unless node['zabbix']['server']['source_url']
   node.default['zabbix']['server']['source_url'] = Chef::Zabbix.default_download_url(node['zabbix']['server']['branch'], node['zabbix']['server']['version'])
 end
+
+unless node['zabbix']['proxy']['source_url']
+  node.default['zabbix']['proxy']['source_url'] = Chef::Zabbix.default_download_url(node['zabbix']['proxy']['branch'], node['zabbix']['proxy']['version'])
+end

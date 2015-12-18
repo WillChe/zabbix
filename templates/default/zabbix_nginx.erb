@@ -1,12 +1,21 @@
 server {
-
-  listen      <%= @web_port %>;
+<% @web_port.each do |port| %>
+  listen      <%= port %>;
+<% end %>
   index       index.php;
   root        <%= @web_dir %>;
-  server_name "<%=@server_name%>";
-  
+<% if @aliases.empty? %>
+  server_name <%=@server_name%>;
+<% else %>
+  server_name <%=@server_name%> <%=@aliases.join(" ")%>;
+<% end %>
   access_log /var/log/nginx/zabbix.access.log;
-
+<% if !@ssl_certificate.empty? %>
+  ssl_certificate <%= @ssl_certificate %>;
+<% end %>
+<% if !@ssl_certificate_key.empty? %>
+  ssl_certificate_key <%= @ssl_certificate_key %>;
+<% end %>
   location ~ .*\.php$ {
     include /etc/nginx/fastcgi_params;
     fastcgi_read_timeout 60000;

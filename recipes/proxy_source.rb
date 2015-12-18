@@ -1,14 +1,14 @@
-# Author:: Nacer Laradji (<nacer.laradji@gmail.com>)
+# Author:: Chris Graham (<eratosthene@gmail.com>)
 # Cookbook Name:: zabbix
-# Recipe:: server_source
+# Recipe:: proxy_source
 #
-# Copyright 2011, Efactures
+# Copyright 2014, Blackboard
 #
 # Apache 2.0
 #
 
 include_recipe 'zabbix::common'
-include_recipe 'zabbix::server_common'
+include_recipe 'zabbix::proxy_common'
 
 packages = []
 case node['platform']
@@ -24,14 +24,13 @@ when 'ubuntu', 'debian'
     php_packages = %w(php-pear php-dev)
     packages.push(*php_packages)
   end
-  init_template = 'zabbix_server.init.erb'
+  init_template = 'zabbix_proxy.init.erb'
 when 'redhat', 'centos', 'scientific', 'amazon', 'oracle'
   include_recipe 'yum-epel'
 
   curldev = (node['platform_version'].to_i < 6) ? 'curl-devel' : 'libcurl-devel'
 
-  packages = %w(fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel php-pear)
-  packages.push('redhat-lsb') if node['init_package'] != 'systemd'
+  packages = %w(fping iksemel-devel iksemel-utils net-snmp-libs net-snmp-devel openssl-devel redhat-lsb php-pear)
   packages.push(curldev)
 
   case node['zabbix']['database']['install_method']
@@ -56,7 +55,7 @@ when 'redhat', 'centos', 'scientific', 'amazon', 'oracle'
     php_packages = %w(php-pear php-devel)
     packages.push(*php_packages)
   end
-  init_template = 'zabbix_server.init-rh.erb'
+  init_template = 'zabbix_proxy.init-rh.erb'
 end
 
 packages.each do |pck|
@@ -72,7 +71,7 @@ php_pear 'oci8' do
   only_if { node['zabbix']['database']['install_method'] == 'oracle' }
 end
 
-configure_options = node['zabbix']['server']['configure_options'].dup
+configure_options = node['zabbix']['proxy']['configure_options'].dup
 configure_options = (configure_options || Array.new).delete_if do |option|
   option.match(/\s*--prefix(\s|=).+/)
 end
@@ -94,49 +93,34 @@ when 'oracle'
   configure_options << with_oracle_include unless configure_options.include?(with_oracle_include)
 end
 
-if node['zabbix']['server']['java_gateway_enable'] == true
-  include_recipe 'java' # install a JDK if not present
-  configure_options << '--enable-java' unless configure_options.include?('--enable-java')
-end
+node.normal['zabbix']['proxy']['configure_options'] = configure_options
 
-node.normal['zabbix']['server']['configure_options'] = configure_options
-
-zabbix_source 'install_zabbix_server' do
-  branch node['zabbix']['server']['branch']
-  version node['zabbix']['server']['version']
-  source_url node['zabbix']['server']['source_url']
-  branch node['zabbix']['server']['branch']
-  version node['zabbix']['server']['version']
+zabbix_source 'install_zabbix_proxy' do
+  branch node['zabbix']['proxy']['branch']
+  version node['zabbix']['proxy']['version']
+  source_url node['zabbix']['proxy']['source_url']
+  branch node['zabbix']['proxy']['branch']
+  version node['zabbix']['proxy']['version']
   code_dir node['zabbix']['src_dir']
-  target_dir "zabbix-#{node['zabbix']['server']['version']}"
+  target_dir "zabbix-#{node['zabbix']['proxy']['version']}"
   install_dir node['zabbix']['install_dir']
   configure_options configure_options.join(' ')
 
-  action :install_server
+  action :install_proxy
 end
 
-if node['init_package'] == 'systemd'
-  template '/usr/lib/systemd/system/zabbix-server.service' do
-    source 'zabbix-server.service.erb'
-    owner 'root'
-    group 'root'
-    mode '644'
-    notifies :restart, 'service[zabbix_server]', :delayed
-  end
-else
-  # Install Init script
-  template '/etc/init.d/zabbix_server' do
-    source init_template
-    owner 'root'
-    group 'root'
-    mode '755'
-    notifies :restart, 'service[zabbix_server]', :delayed
-  end
+# Install Init script
+template '/etc/init.d/zabbix_proxy' do
+  source init_template
+  owner 'root'
+  group 'root'
+  mode '755'
+  notifies :restart, 'service[zabbix_proxy]', :delayed
 end
 
-# install zabbix server conf
-template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
-  source 'zabbix_server.conf.erb'
+# install zabbix proxy conf
+template "#{node['zabbix']['etc_dir']}/zabbix_proxy.conf" do
+  source 'zabbix_proxy.conf.erb'
   owner 'root'
   group 'root'
   mode '644'
@@ -146,25 +130,12 @@ template "#{node['zabbix']['etc_dir']}/zabbix_server.conf" do
     :dbuser             => node['zabbix']['database']['dbuser'],
     :dbpassword         => node['zabbix']['database']['dbpassword'],
     :dbport             => node['zabbix']['database']['dbport'],
-    :java_gateway       => node['zabbix']['server']['java_gateway'],
-    :java_gateway_port  => node['zabbix']['server']['java_gateway_port'],
-    :java_pollers       => node['zabbix']['server']['java_pollers']
   )
-  notifies :restart, 'service[zabbix_server]', :delayed
+  notifies :restart, 'service[zabbix_proxy]', :delayed
 end
 
-# Define zabbix_server service
-service 'zabbix_server' do
-  service_name 'zabbix-server' if node['init_package'] == 'systemd'
+# Define zabbix_proxy service
+service 'zabbix_proxy' do
   supports :status => true, :start => true, :stop => true, :restart => true
-  if node['zabbix']['server']['enabled'] == true
     action [:start, :enable]
-  else
-    action [:stop, :disable]
-  end
-end
-
-# Configure the Java Gateway
-if node['zabbix']['server']['java_gateway_enable'] == true
-  include_recipe 'zabbix::java_gateway'
 end
